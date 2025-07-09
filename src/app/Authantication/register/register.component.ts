@@ -42,10 +42,9 @@ export class RegisterComponent implements OnInit {
         this.companies = data.companies || [];
         console.log('Companies loaded successfully:', this.companies);
         console.log('Companies count:', this.companies.length);
-        // Log company IDs for debugging
-        this.companies.forEach((company, index) => {
-          console.log(`Company ${index + 1}: ID=${company._id || company.id}, Name=${company.name || company.companyname}`);
-        });
+        // this.companies.forEach((company, index) => {
+        //   console.log(`Company ${index + 1}: ID=${company._id || company.id}, Name=${company.name || company.companyname}`);
+        // });
       },
       error: (error) => {
         console.error('Error loading companies:', error);
@@ -54,29 +53,28 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  get companyOptions() {
-    const allOption = { value: 'all', label: 'All Companies' };
-    const companyOptions = this.companies.map(company => ({
-      value: company._id || company.id || '',
-      label: company.name || company.companyname || 'Unknown Company'
-    }));
-    return [allOption, ...companyOptions];
-  }
+  // get companyOptions() {
+  //   const allOption = { value: 'all', label: 'All Companies' };
+  //   const companyOptions = this.companies.map(company => ({
+  //     value: company._id ,
+  //     label: company.name 
+  //   }));
+  //   return [allOption, ...companyOptions];
+  // }
 
-  onCompanyChange(event: any) {
-    const selectedCompanyId = event.target.value;
-    console.log('Selected company:', selectedCompanyId);
-    // Handle company selection if needed
-  }
+  // onCompanyChange(event: any) {
+  //   const selectedCompanyId = event.target.value;
+  //   console.log('Selected company:', selectedCompanyId);
+  // }
 
-  getSelectedCompanyName(): string {
-    const selectedCompanyId = this.registerForm.get('companyId')?.value;
-    if (selectedCompanyId) {
-      const company = this.companies.find(c => (c._id || c.id) === selectedCompanyId);
-      return company ? (company.name || company.companyname || 'Unknown Company') : '';
-    }
-    return '';
-  }
+  // getSelectedCompanyName(): string {
+  //   const selectedCompanyId = this.registerForm.get('companyId')?.value;
+  //   if (selectedCompanyId) {
+  //     const company = this.companies.find(c => (c._id || c.id) === selectedCompanyId);
+  //     return company ? (company.name || company.companyname || 'Unknown Company') : '';
+  //   }
+  //   return '';
+  // }
 
 
   initializeForm() {
@@ -85,15 +83,15 @@ export class RegisterComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
       username: ['', [Validators.required, Validators.minLength(3)]],
-      avatar: [null], // Will handle file separately
+      avatar: [null], 
       phone: ['', [Validators.pattern(/^[0-9+\-\s()]+$/)]],
       address: [''],
-      role: ['user'], // Default role
-      companyId: [''], // Changed from companyname to companyId
+      role: ['user'], 
+      companyId: [''], 
     }, { validators: this.passwordMatchValidator });
   }
 
-  // Custom validator to check password confirmation
+
   passwordMatchValidator(control: AbstractControl): { [key: string]: boolean } | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
@@ -116,7 +114,7 @@ export class RegisterComponent implements OnInit {
   if (event.target.files && event.target.files.length > 0) {
     this.selectedFile = event.target.files[0];
   } else {
-    this.selectedFile = null; // Reset if no file is selected
+    this.selectedFile = null; 
   }
 }
 
@@ -133,16 +131,15 @@ export class RegisterComponent implements OnInit {
       formData.append('address', this.registerForm.value.address || '');
       formData.append('role', this.registerForm.value.role || 'user'); 
       
-      // Handle company selection properly
+
       const selectedCompanyId = this.registerForm.value.companyId;
       if (selectedCompanyId && selectedCompanyId !== '' && selectedCompanyId !== 'all') {
-        // Check if the selected company exists in our companies array
         const selectedCompany = this.companies.find(c => (c._id || c.id) === selectedCompanyId);
         if (selectedCompany) {
           formData.append('companyId', selectedCompanyId);
           console.log('Selected company:', selectedCompany);
         } else {
-          console.warn('Selected company not found in companies list:', selectedCompanyId);
+          console.log('Selected company not found in companies list:', selectedCompanyId);
         }
       }
       

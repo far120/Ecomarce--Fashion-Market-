@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import {  FormBuilder, FormGroup } from '@angular/forms';
 import { ServicecategoryBrandService } from '../../core/services/Servicecategory_Brand/servicecategory-brand.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-category-brand',
@@ -15,7 +16,7 @@ export class CategoryBrandComponent {
   ctegoryform!: FormGroup;
   brandform!: FormGroup;
 
-  constructor(private fb: FormBuilder , private categoryBrandService: ServicecategoryBrandService) {
+  constructor(private fb: FormBuilder , private categoryBrandService: ServicecategoryBrandService ,  private toastService: ToastService) {
     this.intializecategoryForm();
     this.initializebrandForm();
   }
@@ -40,10 +41,12 @@ postCategory() {
   this.categoryBrandService.postcategory(categoryData).subscribe({
     next: (res) => {
       console.log('Category created successfully:', res);
+      this.toastService.showSuccess('Category created successfully!');
       this.ctegoryform.reset();
     },
     error: (error) => {
       console.error('Error creating category:', error);
+      this.toastService.showError('Error creating category: ' + error.message);
     }
   });
 }
@@ -54,9 +57,11 @@ postCategory() {
       next: (res) => {
         console.log('Brand created successfully:', res);
         this.brandform.reset();
+        this.toastService.showSuccess('Brand created successfully!');
       },
       error: (error) => {
         console.error('Error creating brand:', error);
+        this.toastService.showError('Error creating brand: ' + error.message);
       }
     });
   }

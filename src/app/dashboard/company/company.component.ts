@@ -3,6 +3,7 @@ import { ICompany } from '../../core/models/model';
 import { SharedModule } from '../../shared/shared.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ServicecompanyService } from '../../core/services/Servicecompany/servicecompany.service';
+import { ToastService } from '../../core/services/toast.service';
 @Component({
   selector: 'app-company',
   standalone: true,
@@ -17,7 +18,7 @@ export class CompanyComponent {
   isModalOpen = false;
 
 
-  constructor(private companyService: ServicecompanyService , private fb : FormBuilder) {
+  constructor(private companyService: ServicecompanyService , private fb : FormBuilder , private toastService: ToastService) {
     this.loadCompanies();
     this.initializeForm();
   }
@@ -51,10 +52,12 @@ export class CompanyComponent {
         next: (data) => {
           console.log('Company created successfully:', data);
           this.loadCompanies(); 
-          this.closeModal(); 
+          this.closeModal();
+          this.toastService.showSuccess('Company created successfully!');
         },
         error: (error) => {
           console.error('Error creating company:', error);
+          this.toastService.showError('Error creating company: ' + error.message);
         }
       });
     }
@@ -71,9 +74,11 @@ export class CompanyComponent {
       next: (data) => {
         console.log('Company status toggled successfully:', data);
         this.loadCompanies(); 
+        this.toastService.showSuccess('Company status toggled successfully!');
       },
       error: (error) => {
         console.error('Error toggling company status:', error);
+        this.toastService.showError('Error toggling company status: ' + error.message);
       }
     });
   }

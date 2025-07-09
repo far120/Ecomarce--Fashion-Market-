@@ -4,6 +4,7 @@ import { IWishlist } from '../../core/models/model';
 import { SharedModule } from '../../shared/shared.module';
 import { isTokenValid } from '../../../environments/Token';
 import { ServicecartService } from '../../core/services/Servicecart/servicecart.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-wishlist',
@@ -14,7 +15,7 @@ import { ServicecartService } from '../../core/services/Servicecart/servicecart.
 })
 export class WishlistComponent {
   wishlists: IWishlist[] = [];
-  constructor(private serviceWishlist: ServicewishlistService , private serviceCart: ServicecartService) {
+  constructor(private serviceWishlist: ServicewishlistService , private serviceCart: ServicecartService ,  private toastService: ToastService) {
     this.loadWishlists();
   }
   loadWishlists() {
@@ -54,26 +55,24 @@ export class WishlistComponent {
       next: () => {
         console.log(`Wishlist with ID ${wishlistId} deleted successfully`);
         this.loadWishlists(); 
+        this.toastService.showSuccess('Wishlist deleted successfully!');
       },
       error: (error) => {
         console.error(`Error deleting wishlist with ID ${wishlistId}:`, error);
+        this.toastService.showError(`Error deleting wishlist: ${error.message}`);
       }
     });
   }
 
-  // Helper method to get products from wishlist regardless of structure
   getProducts(wishlist: any): any[] {
-    // Check if wishlist has a 'products' array (as shown in console)
     if (wishlist.products && Array.isArray(wishlist.products)) {
       return wishlist.products;
     }
     
-    // Check if wishlist has 'items' array with nested products
     if (wishlist.items && Array.isArray(wishlist.items)) {
       return wishlist.items.map((item: any) => item.product).filter((product: any) => product);
     }
-    
-    // Return empty array if no products found
+
     return [];
   }
 
@@ -83,9 +82,11 @@ export class WishlistComponent {
     return this.serviceCart.postCart(productId).subscribe({
       next: (res: any) => {
         console.log('Product added to cart:', res);
+        this.toastService.showSuccess('Product added to cart successfully!');
       },
       error: (error) => {
         console.error('Error adding product to cart:', error);
+        this.toastService.showError('Error adding product to cart: ' + error.message);
       }
     });
   }

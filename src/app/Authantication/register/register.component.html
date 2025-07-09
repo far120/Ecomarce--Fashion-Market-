@@ -173,7 +173,7 @@
         >
           <option value="">Choose a company (optional)</option>
           <option *ngFor="let company of companies" [value]="company._id || company.id">
-            {{ company.name || company.companyname || 'Unknown Company' }}
+            {{ company.name  }}
           </option>
         </select>
       </div>

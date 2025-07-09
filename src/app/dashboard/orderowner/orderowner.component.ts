@@ -3,6 +3,7 @@ import { ServiceorderService } from '../../core/services/Serviceorder/serviceord
 import { IOrder } from '../../core/models/model';
 import { throwError } from 'rxjs';
 import { SharedModule } from '../../shared/shared.module';
+import { ToastService } from '../../core/services/toast.service';
 
 
 @Component({
@@ -16,7 +17,7 @@ export class OrderownerComponent {
   orders: IOrder[] = [];
   filteredOrders: IOrder[] = [];
   statusFilter= '';
-  constructor(private serviceOrder: ServiceorderService) {
+  constructor(private serviceOrder: ServiceorderService ,  private toastService: ToastService) {
     this.getAllOrders();
   }
   getAllOrders() {
@@ -53,15 +54,17 @@ export class OrderownerComponent {
       console.error('Order ID is required');
       return;
     }
-    const status = 'confirmed'; // Assuming you want to set the status to 'completed'
+    const status = 'confirmed'; 
    this.serviceOrder.patchOrder(orderId , status)?.subscribe({
       next: (response) => {
         this.getAllOrders();
         console.log(`Order with ID ${orderId} patched successfully`, response);
+        this.toastService.showSuccess(`Order with ID ${orderId} patched successfully`);
       }
       , error: (error) => {
         console.error(`Error patching order with ID ${orderId}:`, error);
         return throwError(() => new Error(`Error patching order with ID ${orderId}`));
+        this.toastService.showError(`Error patching order with ID ${orderId}: ` + error.message);
       }
     });
   }
@@ -71,15 +74,18 @@ export class OrderownerComponent {
       console.error('Order ID is required');
       return;
     }
-    const status = 'canceled'; // Assuming you want to set the status to 'completed'
+    const status = 'canceled'; 
    this.serviceOrder.patchOrder(orderId , status)?.subscribe({
       next: (response) => {
         this.getAllOrders();
         console.log(`Order with ID ${orderId} patched successfully`, response);
+        this.toastService.showSuccess(`Order with ID ${orderId} patched successfully`);
       }
       , error: (error) => {
         console.error(`Error patching order with ID ${orderId}:`, error);
+        this.toastService.showError(`Error patching order with ID ${orderId}: ` + error.message);
         return throwError(() => new Error(`Error patching order with ID ${orderId}`));
+
       }
     });
   }
@@ -91,14 +97,16 @@ export class OrderownerComponent {
       console.error('Order ID is required');
       return;
     }
-    const status = 'shipped'; // Assuming you want to set the status to 'completed'
+    const status = 'shipped'; 
    this.serviceOrder.patchOrder(orderId , status)?.subscribe({
       next: (response) => {
         this.getAllOrders();
         console.log(`Order with ID ${orderId} patched successfully`, response);
+        this.toastService.showSuccess(`Order with ID ${orderId} patched successfully`);
       }
       , error: (error) => {
         console.error(`Error patching order with ID ${orderId}:`, error);
+        this.toastService.showError(`Error patching order with ID ${orderId}: ` + error.message);
         return throwError(() => new Error(`Error patching order with ID ${orderId}`));
       }
     });
@@ -109,14 +117,16 @@ export class OrderownerComponent {
       console.error('Order ID is required');
       return;
     }
-    const status = 'delivered'; // Assuming you want to set the status to 'completed'
+    const status = 'delivered'; 
    this.serviceOrder.patchOrder(orderId , status)?.subscribe({
       next: (response) => {
         this.getAllOrders();
         console.log(`Order with ID ${orderId} patched successfully`, response);
+        this.toastService.showSuccess(`Order with ID ${orderId} patched successfully`);
       }
       , error: (error) => {
         console.error(`Error patching order with ID ${orderId}:`, error);
+        this.toastService.showError(`Error patching order with ID ${orderId}: ` + error.message);
         return throwError(() => new Error(`Error patching order with ID ${orderId}`));
       }
     });
@@ -127,11 +137,12 @@ export class OrderownerComponent {
       console.error('Order ID is required');
       return;
     }
-    const status = 'pending'; // Assuming you want to set the status to 'completed'
+    const status = 'pending'; 
    this.serviceOrder.patchOrder(orderId , status)?.subscribe({
       next: (response) => {
         this.getAllOrders();
         console.log(`Order with ID ${orderId} patched successfully`, response);
+        this.toastService.showSuccess(`Order with ID ${orderId} patched successfully`);
       }
       , error: (error) => {
         console.error(`Error patching order with ID ${orderId}:`, error);

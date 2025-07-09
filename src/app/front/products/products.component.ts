@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { ServicecartService } from '../../core/services/Servicecart/servicecart.service';
 import { ServicewishlistService } from '../../core/services/Servicewishlist/servicewishlist.service';
 import { Router } from '@angular/router';
+import { ToastService } from '../../core/services/toast.service';
 @Component({
   selector: 'app-products',
   standalone: true,
@@ -59,7 +60,7 @@ export class ProductsComponent {
 
   
 
-  constructor(private productService: ServiceProductService , private cartService: ServicecartService , private wishlistService: ServicewishlistService ,private router: Router) {
+  constructor(private productService: ServiceProductService , private cartService: ServicecartService , private wishlistService: ServicewishlistService ,private router: Router ,  private toastService: ToastService) {
     if (localStorage.getItem('token')) {
       this.loadProducts();
       this.getCategories();
@@ -355,9 +356,11 @@ export class ProductsComponent {
     return this.cartService.postCart(productId).subscribe({
       next: (res: any) => {
         console.log('Product added to cart:', res);
+        this.toastService.showSuccess('Product added to cart successfully!');
       },
       error: (error) => {
         console.error('Error adding product to cart:', error);
+        this.toastService.showError('Error adding product to cart: ' + error.message);
       }
     });
   }
@@ -366,9 +369,11 @@ export class ProductsComponent {
     return this.wishlistService.postWishlist(productId).subscribe({
       next: (res: IWishlist) => {
         console.log('Product added to wishlist:', res);
+        this.toastService.showSuccess('Product added to wishlist successfully!');
       },
       error: (error) => {
         console.error('Error adding product to wishlist:', error);
+        this.toastService.showError('Error adding product to wishlist: ' + error.message);
       }
     });
   }

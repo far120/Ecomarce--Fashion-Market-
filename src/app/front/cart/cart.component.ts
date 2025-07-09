@@ -5,6 +5,7 @@ import { ICart } from '../../core/models/model';
 import { isTokenValid } from '../../../environments/Token';
 import { SharedModule } from '../../shared/shared.module';
 import { Router } from '@angular/router';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-cart',
@@ -22,7 +23,7 @@ export class CartComponent {
   cheatoutSuccess = false;
   allitems: any[] = [];
 
-  constructor(private serviceCart: ServicecartService,private serviceOrder: ServiceorderService,private router: Router ) {
+  constructor(private serviceCart: ServicecartService,private serviceOrder: ServiceorderService,private router: Router ,  private toastService: ToastService ) {
     this.loadCarts();
     // this.checkAndShowPriceChangeModal();
   }
@@ -94,9 +95,11 @@ export class CartComponent {
         console.log(`Cart with ID ${product} deleted successfully`);
         this.showPriceChangeModal = false;
         this.loadCarts(); 
+        this.toastService.showSuccess('Cart deleted successfully!');
       },
       error: (error) => {
         console.error(`Error deleting cart with ID ${product}:`, error);
+        this.toastService.showError(`Error deleting cart: ${error.message}`);
       } 
     });
   }
@@ -163,6 +166,8 @@ export class CartComponent {
     this.serviceCart.updateCartQuantity(productId, newQuantity).subscribe({
       next: () => {
         console.log(`Quantity updated for cart ID ${cartId}, product ID ${productId} to ${newQuantity}`);
+        this.loadCarts();
+        this.toastService.showSuccess(`Quantity updated successfully!`);
       },
       error: (error) => {
         if (error?.status === 403) {
@@ -215,9 +220,11 @@ export class CartComponent {
       next: (res: any) => {
         this.resetCheckoutForm();
         this.loadCarts();
+        this.toastService.showSuccess('Order created successfully!');
       },
       error: (err: any) => {
       console.error('Error creating order:', err);
+      this.toastService.showError('Error creating order: ' + (err?.message || 'Unknown error'));
       }
     });
   }

@@ -3,6 +3,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { ServiceAuthService } from '../../core/services/ServiceAuth/service-auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,12 @@ export class LoginComponent implements OnInit {
 
   loginForm!: FormGroup;
 
-  constructor(private authService: ServiceAuthService, private fb: FormBuilder , private Router: Router) {
+  constructor(
+    private authService: ServiceAuthService, 
+    private fb: FormBuilder, 
+    private Router: Router,
+    private toastService: ToastService
+  ) {
     
   }
 
@@ -34,9 +40,10 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.Login();
     } else {
-      console.log('Form is invalid');
+      this.toastService.showError('Please fill in all required fields correctly');
     }
   }
+
 
 
   resetForm() {
@@ -52,10 +59,13 @@ export class LoginComponent implements OnInit {
         next: (response) => {
           console.log('Login successful:', response);
           localStorage.setItem('token', response.token);
+          this.toastService.showSuccess('Login successful! Welcome back!');
           this.Router.navigate(['/']);
         },
         error: (error) => {
           console.error('Login failed:', error);
+          const errorMessage = error.error?.message || 'Login failed. Please check your credentials.';
+          this.toastService.showError(errorMessage);
         }
       });
     }

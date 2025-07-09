@@ -18,7 +18,7 @@ notifications: INotification[] = [];
   loadnotifications() {
     this.notficationService.getAllNotifications().subscribe({
       next: (res: any) => {
-        this.notifications = res.notifications; // Assuming the response contains a 'notifications' array
+        this.notifications = res.notifications; 
         console.log('Notifications:', res);
         console.log('all Notifications:', this.notifications);
       },

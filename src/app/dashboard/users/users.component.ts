@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { SharedModule  } from '../../shared/shared.module';
 import { IRegisterUser } from '../../core/models/model';
 import { ServiceUSerService } from '../../core/services/ServiceUser/service-user.service';
+import { ToastService } from '../../core/services/toast.service';
 
 
 @Component({
@@ -43,7 +44,7 @@ export class UsersComponent {
     { value: 'last90Days', label: 'Last 90 Days' }
   ];
 
-  // Get dynamic company options from users
+ 
   get companyOptions() {
     const allOption = { value: 'all', label: 'All Companies' };
     const companies = this.users
@@ -62,7 +63,6 @@ export class UsersComponent {
   // Apply all filters
   applyFilters() {
     this.filteredUsers = this.users.filter(user => {
-      // Status filter (active/inactive)
       if (this.selectedStatus !== 'all') {
         const isActive = this.selectedStatus === 'true';
         if (user.isActive !== isActive) {
@@ -70,12 +70,11 @@ export class UsersComponent {
         }
       }
 
-      // Role filter
       if (this.selectedRole !== 'all' && user.role !== this.selectedRole) {
         return false;
       }
 
-      // Company filter
+
       if (this.selectedCompany !== 'all') {
         const userCompanyId = typeof user.companyId === 'object' ? user.companyId?._id : user.companyId;
         if (userCompanyId !== this.selectedCompany) {
@@ -83,7 +82,7 @@ export class UsersComponent {
         }
       }
 
-      // Created date filter
+
       if (this.selectedCreatedAt !== 'all' && user.createdAt) {
         const userDate = new Date(user.createdAt);
         const now = new Date();
@@ -109,7 +108,7 @@ export class UsersComponent {
     });
   }
 
-  // Filter change handlers
+
   onStatusFilterChange(event: any) {
     this.selectedStatus = event.target.value;
     this.applyFilters();
@@ -130,7 +129,7 @@ export class UsersComponent {
     this.applyFilters();
   }
 
-  // Clear all filters
+
   clearAllFilters() {
     this.selectedStatus = 'all';
     this.selectedRole = 'all';
@@ -139,7 +138,7 @@ export class UsersComponent {
     this.applyFilters();
   }
 
-  // Check if any filter is active
+
   get hasActiveFilters(): boolean {
     return this.selectedStatus !== 'all' || 
            this.selectedRole !== 'all' || 
@@ -149,7 +148,7 @@ export class UsersComponent {
 
  
 
-  // Get filter count for each option
+
   getStatusCount(status: string): number {
     if (status === 'all') return this.users.length;
     return this.users.filter(user => user.isActive === (status === 'true')).length;
@@ -187,7 +186,7 @@ export class UsersComponent {
     }).length;
   }
 
-  constructor(private userService: ServiceUSerService) {
+  constructor(private userService: ServiceUSerService ,  private toastService: ToastService) {
   }
 
   ngOnInit() {
@@ -198,8 +197,9 @@ export class UsersComponent {
     this.userService.getallUsers().subscribe({
       next: (res: any) => {
         this.users = res.users;
-        this.filteredUsers = this.users; // Initialize filtered users
-        this.applyFilters(); // Apply any initial filters
+        this.filteredUsers = this.users; 
+        this.applyFilters(); 
+        console.log('Users loaded successfully:', this.users);
       },
       error: (error) => {
         console.error('Error fetching users:', error);
@@ -212,7 +212,8 @@ export class UsersComponent {
       this.userService.patchUser(userId).subscribe({
         next: (response) => {
           console.log('User role updated successfully:', response);
-          this.getAllUsers(); // Refresh the user list after updating role
+          this.getAllUsers();
+          this.toastService.showSuccess('User role updated successfully!');
         },
         error: (error) => {
           console.error('Error updating user role:', error);
@@ -226,7 +227,8 @@ export class UsersComponent {
       this.userService.deleteUser(userId).subscribe({
         next: (response) => {
           console.log('User deleted successfully:', response);
-          this.getAllUsers(); // Refresh the user list after deletion
+          this.getAllUsers(); 
+          this.toastService.showSuccess('User deleted successfully!');
         },
         error: (error) => {
           console.error('Error deleting user:', error);

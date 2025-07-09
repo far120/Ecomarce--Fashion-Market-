@@ -3,6 +3,7 @@ import { ServiceProductService } from '../../core/services/ServiceProduct/servic
 import { IProduct , IBrand ,ICategory } from '../../core/models/model';
 import { catchError } from 'rxjs/operators';
 import { SharedModule } from '../../shared/shared.module';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-products',
@@ -57,7 +58,7 @@ export class ProductsComponent {
 
   
 
-  constructor(private productService: ServiceProductService) {
+  constructor(private productService: ServiceProductService ,  private toastService: ToastService) {
     this.loadProducts();
     this.getCategories();
     this.getBrands();
@@ -100,7 +101,7 @@ export class ProductsComponent {
     });
   }
 
-  // Get dynamic category options
+
 
   get categoryOptions() {
     const allOption = { value: 'all', label: 'All Categories' };
@@ -111,7 +112,7 @@ export class ProductsComponent {
     return [allOption, ...categoryOpts];
   }
 
-  // Get dynamic brand options
+
   
   get brandOptions() {
     const allOption = { value: 'all', label: 'All Brands' };
@@ -122,7 +123,7 @@ export class ProductsComponent {
     return [allOption, ...brandOpts];
   }
 
-  // Filter change handlers
+
   onStatusFilterChange(event: any) {
     this.selectedStatus = event.target.value;
     this.applyFilters();
@@ -153,7 +154,6 @@ export class ProductsComponent {
     this.applyFilters();
   }
 
-  // Clear all filters
   clearAllFilters() {
     this.selectedStatus = 'all';
     this.selectedCategory = 'all';
@@ -164,7 +164,7 @@ export class ProductsComponent {
     this.applyFilters();
   }
 
-  // Check if any filter is active
+
   get hasActiveFilters(): boolean {
     return this.selectedStatus !== 'all' || 
            this.selectedCategory !== 'all' || 
@@ -174,15 +174,15 @@ export class ProductsComponent {
            this.selectedCreatedAt !== 'all';
   }
 
-  // Apply all filters
+
   applyFilters() {
     this.filteredProducts = this.products.filter(product => {
-      // Status filter
+     
       if (this.selectedStatus !== 'all' && product.status !== this.selectedStatus) {
         return false;
       }
 
-      // Category filter
+      
       if (this.selectedCategory !== 'all') {
         const productCategoryId = typeof product.category === 'object' ? product.category?._id : product.category;
         if (productCategoryId !== this.selectedCategory) {
@@ -190,7 +190,7 @@ export class ProductsComponent {
         }
       }
 
-      // Brand filter
+      
       if (this.selectedBrand !== 'all') {
         const productBrandId = typeof product.brand === 'object' ? product.brand?._id : product.brand;
         if (productBrandId !== this.selectedBrand) {
@@ -198,12 +198,11 @@ export class ProductsComponent {
         }
       }
 
-      // Target audience filter
       if (this.selectedTargetAudience !== 'all' && product.targetAudience !== this.selectedTargetAudience) {
         return false;
       }
 
-      // Price range filter
+      
       if (this.selectedPriceRange !== 'all') {
         const price = product.price;
         switch (this.selectedPriceRange) {
@@ -222,7 +221,7 @@ export class ProductsComponent {
         }
       }
 
-      // Created date filter
+      
       if (this.selectedCreatedAt !== 'all' && product.createdAt) {
         const productDate = new Date(product.createdAt);
         const now = new Date();
@@ -246,7 +245,7 @@ export class ProductsComponent {
   }
 
 
-  // Get count for each status
+
   getStatusCount(status: string): number {
     if (status === 'all') {
       return this.products.length;
@@ -254,7 +253,7 @@ export class ProductsComponent {
     return this.products.filter(product => product.status === status).length;
   }
 
-  // Get count for each category
+  
   getCategoryCount(categoryId: string): number {
     if (categoryId === 'all') {
       return this.products.length;
@@ -265,7 +264,7 @@ export class ProductsComponent {
     }).length;
   }
 
-  // Get count for each brand
+ 
   getBrandCount(brandId: string): number {
     if (brandId === 'all') {
       return this.products.length;
@@ -276,7 +275,7 @@ export class ProductsComponent {
     }).length;
   }
 
-  // Get count for each target audience
+ 
   getTargetAudienceCount(audience: string): number {
     if (audience === 'all') {
       return this.products.length;
@@ -284,7 +283,7 @@ export class ProductsComponent {
     return this.products.filter(product => product.targetAudience === audience).length;
   }
 
-  // Get count for each price range
+
   getPriceRangeCount(range: string): number {
     if (range === 'all') {
       return this.products.length;
@@ -312,7 +311,8 @@ export class ProductsComponent {
     this.productService.approveProduct(productId).subscribe({
       next: (response) => {
         console.log('Product approved successfully:', response);
-        this.loadProducts(); // Reload products after approval
+        this.loadProducts(); 
+        this.toastService.showSuccess('Product approved successfully!');
       },
       error: (error) => {
         console.error('Error approving product:', error);
@@ -324,7 +324,8 @@ export class ProductsComponent {
     this.productService.deleteProduct(productId).subscribe({
       next: (response) => {
         console.log('Product deleted successfully:', response);
-        this.loadProducts(); // Reload products after deletion
+        this.loadProducts(); 
+        this.toastService.showSuccess('Product deleted successfully!');
       },
        error: (error) => {
         console.error('Error deleting product:', error);

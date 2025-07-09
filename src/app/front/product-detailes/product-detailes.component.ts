@@ -6,6 +6,7 @@ import { ServiceProductService } from '../../core/services/ServiceProduct/servic
 import { ActivatedRoute } from '@angular/router';
 import { ServicecartService } from '../../core/services/Servicecart/servicecart.service';
 import { ServicewishlistService } from '../../core/services/Servicewishlist/servicewishlist.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-product-detailes',
@@ -18,7 +19,7 @@ export class ProductDetailesComponent {
   products: IProduct[] = [];
 
 
-  constructor(private serviceProduct: ServiceProductService,private cartService: ServicecartService, private wishlistService: ServicewishlistService, private route: ActivatedRoute ) {}
+  constructor(private serviceProduct: ServiceProductService,private cartService: ServicecartService, private wishlistService: ServicewishlistService, private route: ActivatedRoute ,  private toastService: ToastService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -59,9 +60,11 @@ export class ProductDetailesComponent {
     return this.cartService.postCart(productId).subscribe({
       next: (res: any) => {
         console.log('Product added to cart:', res);
+        this.toastService.showSuccess('Product added to cart successfully!');
       },
       error: (error) => {
         console.error('Error adding product to cart:', error);
+        this.toastService.showError('Error adding product to cart: ' + error.message);
       }
     });
   }
@@ -70,9 +73,12 @@ export class ProductDetailesComponent {
     return this.wishlistService.postWishlist(productId).subscribe({
       next: (res: IWishlist) => {
         console.log('Product added to wishlist:', res);
+        this.toastService.showSuccess('Product added to whishlist successfully!');
+
       },
       error: (error) => {
         console.error('Error adding product to wishlist:', error);
+        this.toastService.showError('Error adding product to wishlist: ' + error.message);
       }
     });
   }

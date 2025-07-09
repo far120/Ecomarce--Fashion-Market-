@@ -72,7 +72,7 @@ onFileSelected(event: any) {
      if (event.target.files && event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
     } else {
-      this.selectedFile = null; // Reset if no file is selected
+      this.selectedFile = null; 
     }
   }
 
@@ -105,11 +105,11 @@ onFileSelected(event: any) {
 
   
 
-  // Reset form to original values
-  resetForm() {
-    this.getUserProfile(); // Reload original data
-    this.selectedFile = null;
-  }
+  
+  // resetForm() {
+  //   this.getUserProfile(); 
+  //   this.selectedFile = null;
+  // }
 
   
 }

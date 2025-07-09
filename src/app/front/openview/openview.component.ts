@@ -4,6 +4,7 @@ import { Iopenview } from '../../core/models/model';
 import { isTokenValid } from '../../../environments/Token';
 import { SharedModule } from '../../shared/shared.module';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ToastService } from '../../core/services/toast.service';
 @Component({
   selector: 'app-openview',
   standalone: true,
@@ -16,7 +17,7 @@ export class OpenviewComponent {
   token = localStorage.getItem('token') || '';
 
   openviewform! : FormGroup;
-  constructor(private serviceOpenview: ServiceopenviewService , private fb : FormBuilder) {
+  constructor(private serviceOpenview: ServiceopenviewService , private fb : FormBuilder ,  private toastService: ToastService) {
     this.initilaizeForm();
 }
   initilaizeForm() {
@@ -55,10 +56,12 @@ export class OpenviewComponent {
       next: (data: any) => {
         console.log('Open view created successfully:', data);
         this.openviewform.reset();
-        this.loadOpenViews(); // Refresh the reviews list after successful submission
+        this.loadOpenViews(); 
+        this.toastService.showSuccess('Open view created successfully!');
       },
       error: (error) => {
         console.error('Error creating open view:', error);
+        this.toastService.showError('Error creating open view: ' + error.message);
       }
     });
   }

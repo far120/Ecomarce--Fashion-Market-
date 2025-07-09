@@ -3,6 +3,7 @@ import { ServiceopenviewService } from '../../core/services/Serviceopenview/serv
 import { Iopenview } from '../../core/models/model';
 import { isTokenValid } from '../../../environments/Token';
 import { SharedModule } from '../../shared/shared.module';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-openviewowner',
@@ -13,7 +14,7 @@ import { SharedModule } from '../../shared/shared.module';
 })
 export class OpenviewownerComponent {
   openviews: Iopenview[] = [];
-  constructor(private serviceOpenview: ServiceopenviewService) {
+  constructor(private serviceOpenview: ServiceopenviewService ,  private toastService: ToastService) {
     this.loadOpenViews();
   }
   loadOpenViews() {
@@ -41,10 +42,12 @@ export class OpenviewownerComponent {
     this.serviceOpenview.approveOpenView(id).subscribe({
       next: (data: any) => {
         console.log('Open view updated successfully:', data); 
-        this.loadOpenViews(); // Refresh the reviews list after successful update
+        this.loadOpenViews(); 
+        this.toastService.showSuccess('Open view updated successfully!');
       }
       , error: (error) => {
         console.error('Error updating open view:', error);
+        this.toastService.showError('Error updating open view: ' + error.message);
       }
     });
   }

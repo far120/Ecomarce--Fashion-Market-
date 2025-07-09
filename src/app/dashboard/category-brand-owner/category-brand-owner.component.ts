@@ -3,6 +3,7 @@ import { ServicecategoryBrandService } from '../../core/services/Servicecategory
 import { ServiceProductService } from '../../core/services/ServiceProduct/service-product.service';
 import { SharedModule } from '../../shared/shared.module';
 import { ICategory, IBrand } from '../../core/models/model';
+import { ToastService } from '../../core/services/toast.service';
 @Component({
   selector: 'app-category-brand-owner',
   standalone: true,
@@ -13,16 +14,18 @@ import { ICategory, IBrand } from '../../core/models/model';
 export class CategoryBrandOwnerComponent {
   categories: ICategory[] = [];
   brands: IBrand[] = [];
-  constructor(private serviececategoryBrandService: ServicecategoryBrandService ,private productService: ServiceProductService) {}
+  constructor(private serviececategoryBrandService: ServicecategoryBrandService ,private productService: ServiceProductService ,  private toastService: ToastService) {}
 
 
   getCategories() {
     this.productService.getAllCategories().subscribe({
       next: (res: any) => {
         this.categories = res.categories;
+        console.log('Categories fetched successfully:', this.categories);
       },
       error: (error) => {
         console.error('Error fetching categories:', error);
+        this.toastService.showError('Error fetching categories: ' + error.message);
       }
     });
   }
@@ -31,9 +34,11 @@ export class CategoryBrandOwnerComponent {
     this.productService.getAllBrands().subscribe({
       next: (res: any) => {
         this.brands = res.brands;
+        console.log('Brands fetched successfully:', this.brands);
       },
       error: (error) => {
         console.error('Error fetching brands:', error);
+        this.toastService.showError('Error fetching brands: ' + error.message);
       }
     });
   }
@@ -48,6 +53,7 @@ export class CategoryBrandOwnerComponent {
       },
       error: (error) => {
         console.error('Error approving category:', error);
+        this.toastService.showError('Error approving category: ' + error.message);
       }
     });
   }
@@ -56,10 +62,12 @@ export class CategoryBrandOwnerComponent {
     this.serviececategoryBrandService.patchbrand(brandId).subscribe({
       next: (res) => {
         console.log('Brand approved successfully:', res);
-        this.getBrands(); // Refresh brands after approval
+        this.getBrands(); 
+
       },
       error: (error) => {
         console.error('Error approving brand:', error);
+        this.toastService.showError('Error approving brand: ' + error.message);
       }
     });
   }

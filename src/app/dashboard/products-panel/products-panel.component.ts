@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ServiceProductService } from '../../core/services/ServiceProduct/service-product.service';
 import { IProduct, ICategory, IBrand } from '../../core/models/model';
 import { SharedModule } from '../../shared/shared.module';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-products-panel',
@@ -63,7 +64,7 @@ export class ProductsPanelComponent {
   isEditMode: boolean = false;
   editingProductId: string | null = null;
 
-  constructor(private productService: ServiceProductService, private fb: FormBuilder) {
+  constructor(private productService: ServiceProductService, private fb: FormBuilder ,  private toastService: ToastService) {
     this.initializeForm();
     this.loadProducts();
     this.getCategories();
@@ -120,6 +121,7 @@ export class ProductsPanelComponent {
         console.log('Product added successfully:', response);
         this.closeProductModal();
         this.loadProducts();
+        this.toastService.showSuccess('Product added successfully!');
       },
       error: (error) => {
         console.error('Error adding product:', error);
@@ -133,6 +135,7 @@ export class ProductsPanelComponent {
         console.log('Product updated successfully:', response);
         this.closeProductModal();
         this.loadProducts();
+        this.toastService.showSuccess('Product updated successfully!');
       },
       error: (error) => {
         console.error('Error updating product:', error);
@@ -192,7 +195,6 @@ export class ProductsPanelComponent {
     this.selectedFile = null;
   }
 
-  // Update the loadProducts method to use applyFilters
   loadProducts() {
     this.productService.getProductsByCompanyId().subscribe({
       next: (res: any) => {
@@ -233,6 +235,7 @@ export class ProductsPanelComponent {
       next: (response) => {
         console.log('Product deleted successfully:', response);
         this.loadProducts();
+        this.toastService.showSuccess('Product deleted successfully!');
       },
       error: (error) => {
         console.error('Error deleting product:', error);
@@ -241,7 +244,7 @@ export class ProductsPanelComponent {
   }
 
 
-  // Get dynamic category options
+
   get categoryOptions() {
     const allOption = { value: 'all', label: 'All Categories' };
     const categoryOpts = this.categories.map(cat => ({ 
@@ -251,7 +254,7 @@ export class ProductsPanelComponent {
     return [allOption, ...categoryOpts];
   }
 
-  // Get dynamic brand options
+  
   get brandOptions() {
     const allOption = { value: 'all', label: 'All Brands' };
     const brandOpts = this.brands.map(brand => ({ 
@@ -261,7 +264,7 @@ export class ProductsPanelComponent {
     return [allOption, ...brandOpts];
   }
 
-  // Filter change handlers
+ 
   onStatusFilterChange(event: any) {
     this.selectedStatus = event.target.value;
     this.applyFilter();
@@ -292,7 +295,7 @@ export class ProductsPanelComponent {
     this.applyFilter();
   }
 
-  // Clear all filters
+
   clearAllFilters() {
     this.selectedStatus = 'all';
     this.selectedCategory = 'all';
@@ -303,7 +306,7 @@ export class ProductsPanelComponent {
     this.applyFilter();
   }
 
-  // Check if any filter is active
+
   get hasActiveFilters(): boolean {
     return this.selectedStatus !== 'all' || 
            this.selectedCategory !== 'all' || 
@@ -313,7 +316,7 @@ export class ProductsPanelComponent {
            this.selectedCreatedAt !== 'all';
   }
 
-    // Apply all filters
+
   applyFilter() {
     this.filteredProducts = this.products.filter(product => {
       // Status filter
@@ -321,7 +324,7 @@ export class ProductsPanelComponent {
         return false;
       }
 
-      // Category filter
+
       if (this.selectedCategory !== 'all') {
         const productCategoryId = typeof product.category === 'object' ? product.category?._id : product.category;
         if (productCategoryId !== this.selectedCategory) {
@@ -329,7 +332,7 @@ export class ProductsPanelComponent {
         }
       }
 
-      // Brand filter
+
       if (this.selectedBrand !== 'all') {
         const productBrandId = typeof product.brand === 'object' ? product.brand?._id : product.brand;
         if (productBrandId !== this.selectedBrand) {
@@ -337,7 +340,7 @@ export class ProductsPanelComponent {
         }
       }
 
-      // Target audience filter
+
       if (this.selectedTargetAudience !== 'all' && product.targetAudience !== this.selectedTargetAudience) {
         return false;
       }

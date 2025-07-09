@@ -1,0 +1,91 @@
+<div class="container mx-auto px-4 py-10 max-w-6xl">
+  <a routerLink="/products" class="flex items-center text-gray-500 hover:text-indigo-600 mb-6 text-sm font-medium">
+    <span class="mr-2">&#10005;</span> Back to Products
+  </a>
+  <div class="flex flex-col md:flex-row gap-10">
+    <!-- Product Image -->
+    <div class="flex-1 flex items-center justify-center">
+      <div class="w-full max-w-md aspect-square bg-gray-100 rounded-2xl flex items-center justify-center overflow-hidden">
+        <img *ngIf="products[0] && products[0].images" [src]="'http://localhost:2026/uploads/' + products[0].images" [alt]="products[0].name" [title]="products[0].name" class="object-contain w-full h-full" crossorigin="anonymous" />
+        
+        <div *ngIf="products[0] && !products[0].images" class="w-full h-full flex items-center justify-center text-gray-300 text-6xl">
+          <span class="material-icons">image</span>
+        </div>
+      </div>
+    </div>
+    <!-- Product Details -->
+    <div class="flex-1 space-y-6">
+      <div>
+        <span class="inline-block bg-gray-200 text-gray-600 text-xs font-semibold px-3 py-1 rounded mb-2">{{ products[0] && products[0].category ? products[0].category.name : 'Jeans' }}</span>
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ products[0] && products[0].name }}</h2>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-yellow-400 text-lg">★</span>
+          <span class="font-semibold text-gray-700">4.6</span>
+          <span class="text-gray-400 text-sm">(203 reviews)</span>
+        </div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-3xl font-bold text-gray-900">${{ products[0] && (products[0].newprice || products[0].price) }}</span>
+          <span *ngIf="products[0] && products[0].discount" class="text-xl text-gray-400 line-through">${{ products[0].price }}</span>
+          <span *ngIf="products[0] && products[0].discount" class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">{{ products[0].discount }}% OFF</span>
+        </div>
+        <p class="text-gray-600 mb-4">{{ products[0] && products[0].description }}</p>
+        <!-- Size & Color (static for demo) -->
+        <div class="mb-4">
+          <div class="mb-2 text-sm font-semibold text-gray-700">Size</div>
+          <div class="flex gap-2">
+            <button class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-indigo-50">S</button>
+            <button class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-indigo-50">M</button>
+            <button class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-indigo-50">L</button>
+            <button class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-indigo-50">XL</button>
+            <button class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-indigo-50">XXL</button>
+          </div>
+        </div>
+        <div class="mb-6">
+          <div class="mb-2 text-sm font-semibold text-gray-700">Color</div>
+          <div class="flex gap-2">
+            <button class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-indigo-50">Dark Blue</button>
+            <button class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-indigo-50">Black</button>
+            <button class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-indigo-50">Light Blue</button>
+          </div>
+        </div>
+        <div class="flex gap-4 items-center">
+          <button (click)="postToCart(products[0] && products[0]._id ? products[0]._id : '')" class="flex-1 py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-lg shadow-lg hover:from-purple-600 hover:to-pink-600 transition-all">Add to Cart</button>
+          <button (click)="postToWishlist(products[0] && products[0]._id ? products[0]._id : '')" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center bg-white hover:bg-indigo-50 shadow-lg transition-all" title="Add to wishlist">
+            <svg class="w-6 h-6 text-gray-400 hover:text-pink-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Reviews Section (static for now) -->
+  <div class="mt-16">
+    <h3 class="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h3>
+    <div class="bg-gray-50 rounded-xl p-8 mb-8">
+      <div class="mb-4 font-semibold text-gray-800">Write a Review</div>
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-yellow-400 text-xl">★</span>
+        <span class="text-yellow-400 text-xl">★</span>
+        <span class="text-yellow-400 text-xl">★</span>
+        <span class="text-yellow-400 text-xl">★</span>
+        <span class="text-yellow-400 text-xl">★</span>
+      </div>
+      <textarea class="w-full border border-gray-200 rounded-lg p-3 mb-4" rows="3" placeholder="Share your experience with this product..."></textarea>
+      <button class="px-6 py-2 rounded bg-purple-600 text-white font-semibold hover:bg-purple-700 transition">Submit Review</button>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6">
+      <div class="font-bold text-gray-800 mb-2">Alex P.</div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-yellow-400 text-lg">★</span>
+        <span class="text-yellow-400 text-lg">★</span>
+        <span class="text-yellow-400 text-lg">★</span>
+        <span class="text-yellow-400 text-lg">★</span>
+        <span class="text-yellow-400 text-lg">★</span>
+        <span class="text-gray-400 text-xs ml-2">2024-01-06</span>
+      </div>
+      <div class="text-gray-700">Great fit and comfortable. Good quality denim.</div>
+    </div>
+  </div>
+</div>

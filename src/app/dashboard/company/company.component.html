@@ -1,0 +1,198 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Page Header -->
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Company Management</h1>
+      <p class="text-gray-600">Manage companies and their approval status</p>
+    </div>
+    <button 
+      (click)="openModal()"
+      class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center shadow-lg">
+      <i class="fas fa-plus mr-2"></i>
+      Add New Company
+    </button>
+  </div>
+
+  <!-- Create Company Modal -->
+  <div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" (click)="closeModal()">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" (click)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center pb-4 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-900">Add New Company</h3>
+        <button 
+          (click)="closeModal()"
+          title="Close modal"
+          class="text-gray-400 hover:text-gray-600 transition-colors">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="mt-6">
+        <form [formGroup]="companyform" (ngSubmit)="createCompany()">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
+              <input 
+                type="text" 
+                id="name" 
+                formControlName="name"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-300]="companyform.get('name')?.invalid && companyform.get('name')?.touched"
+                placeholder="Enter company name">
+              <div *ngIf="companyform.get('name')?.invalid && companyform.get('name')?.touched" class="mt-1 text-sm text-red-600">
+                <div *ngIf="companyform.get('name')?.hasError('required')">Company name is required</div>
+                <div *ngIf="companyform.get('name')?.hasError('minlength')">Company name must be at least 2 characters</div>
+              </div>
+            </div>
+            <div>
+              <label for="emailDomain" class="block text-sm font-medium text-gray-700 mb-1">Email Domain *</label>
+              <input 
+                type="text" 
+                id="emailDomain" 
+                formControlName="emailDomain"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-300]="companyform.get('emailDomain')?.invalid && companyform.get('emailDomain')?.touched"
+                placeholder="e.g., &#64;company.com">
+              <div *ngIf="companyform.get('emailDomain')?.invalid && companyform.get('emailDomain')?.touched" class="mt-1 text-sm text-red-600">
+                <div *ngIf="companyform.get('emailDomain')?.hasError('required')">Email domain is required</div>
+                <div *ngIf="companyform.get('emailDomain')?.hasError('pattern')">Email domain must start with &#64; and be a valid domain (e.g., &#64;company.com)</div>
+              </div>
+            </div>
+            <div>
+              <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <input 
+                type="text" 
+                id="address" 
+                formControlName="address"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter company address">
+            </div>
+            <div>
+              <label for="contactNumber" class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+              <input 
+                type="tel" 
+                id="contactNumber" 
+                formControlName="contactNumber"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-300]="companyform.get('contactNumber')?.invalid && companyform.get('contactNumber')?.touched"
+                placeholder="Enter contact number">
+              <div *ngIf="companyform.get('contactNumber')?.invalid && companyform.get('contactNumber')?.touched" class="mt-1 text-sm text-red-600">
+                <div *ngIf="companyform.get('contactNumber')?.hasError('pattern')">Please enter a valid phone number</div>
+              </div>
+            </div>
+            <div class="md:col-span-2">
+              <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea 
+                id="description" 
+                formControlName="description"
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter company description"></textarea>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="mt-6 flex justify-end space-x-3 pt-4 border-t border-gray-200">
+            <button 
+              type="button" 
+              (click)="closeModal()"
+              class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors">
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              [disabled]="!companyform.valid"
+              class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center">
+              <i class="fas fa-plus mr-2"></i>
+              Create Company
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Companies List -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-800">Companies List</h2>
+    </div>
+    
+    <div *ngIf="companies.length === 0" class="p-12 text-center text-gray-500">
+      <div class="text-gray-400 text-6xl mb-4">
+        <i class="fas fa-building"></i>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No companies found</h3>
+      <p class="text-gray-600">Create your first company using the form above to get started.</p>
+    </div>
+
+    <div *ngIf="companies.length > 0" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Domain</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CompanyUsers</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let company of companies;" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-10 w-10">
+                  <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                    <span class="text-white font-medium text-sm">{{ company.name && company.name.charAt(0).toUpperCase() }}</span>
+                  </div>
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-gray-900">{{ company.name }}</div>
+                  <div class="text-sm text-gray-500">{{ company.description | slice:0:50 }}{{ (company.description && company.description.length > 50) ? '...' : '' }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ company.emailDomain }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <i class="fas fa-users mr-1 text-gray-400"></i>
+                <span class="text-sm text-gray-900">{{ company.users.length || 0 }}</span>
+                <span class="text-sm text-gray-500 ml-1">users</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ company.contactNumber }}</div>
+              <div class="text-sm text-gray-500">{{ company.address }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span *ngIf="company.isApproved" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <i class="fas fa-check-circle mr-1"></i>
+                Approved
+              </span>
+              <span *ngIf="!company.isApproved" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                <i class="fas fa-clock mr-1"></i>
+                Pending
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <button 
+                (click)="toggleCompanyStatus(company._id!)"
+                class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
+                [class]="company.isApproved ? 
+                  'text-red-700 bg-red-100 hover:bg-red-200 focus:ring-red-500' : 
+                  'text-green-700 bg-green-100 hover:bg-green-200 focus:ring-green-500'">
+                <i [class]="company.isApproved ? 'fas fa-times mr-1' : 'fas fa-check mr-1'"></i>
+                {{ company.isApproved ? 'Reject' : 'Approve' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

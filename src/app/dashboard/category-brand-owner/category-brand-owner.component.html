@@ -1,0 +1,245 @@
+<div class="container mx-auto p-6 bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Category & Brand Management</h1>
+    <p class="text-gray-600 mt-2">Review and approve categories and brands suggested by companies</p>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+    
+    <!-- Categories Section -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+          </div>
+          <h2 class="text-xl font-semibold text-gray-900">Categories</h2>
+        </div>
+        
+      </div>
+
+      <!-- Categories Count -->
+      <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-gray-600">Total Categories:</span>
+          <span class="font-semibold text-gray-900">{{ categories.length }}</span>
+        </div>
+      </div>
+
+      <!-- Categories List -->
+      <div class="space-y-3 max-h-96 overflow-y-auto">
+        <!-- Empty State -->
+        @if (categories.length === 0) {
+          <div class="text-center py-12">
+            <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Categories Found</h3>
+            <p class="text-gray-500">No categories have been suggested yet.</p>
+          </div>
+        }
+
+        <!-- Category Items -->
+        @for (category of categories; track category._id) {
+          <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">{{ category.name }}</h3>
+                
+                <div class="flex items-center space-x-3 mb-3">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border"
+                        [class]="category.isApproved ? 'bg-green-100 text-green-800 border-green-200' : 'bg-orange-100 text-orange-800 border-orange-200'">
+                    <span class="w-2 h-2 bg-current rounded-full mr-2"
+                          [class]="category.isApproved ? 'text-green-500' : 'text-orange-500'"></span>
+                    {{ category.isApproved ? 'Approved' : 'Pending Approval' }}
+                  </span>
+                </div>
+                
+                <div class="text-xs text-gray-500 space-y-1">
+                  <p><span class="font-medium">ID:</span> {{ category._id }}</p>
+                  @if (category.suggestedBy) {
+                    <p>
+                      <span class="font-medium">Suggested by:</span> {{ category.suggestedBy }}
+                    </p>
+                  }
+                </div>
+              </div>
+              
+              <div class="ml-4 flex flex-col space-y-2">
+                @if (!category.isApproved) {
+                  <button 
+                    (click)="patchCategory(category._id!)"
+                    class="flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Approve
+                  </button>
+                }
+                
+                @if (category.isApproved) {
+                  <button 
+                    (click)="patchCategory(category._id!)"
+                    class="flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Revoke Approval
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Brands Section -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-purple-100 rounded-lg">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+            </svg>
+          </div>
+          <h2 class="text-xl font-semibold text-gray-900">Brands</h2>
+        </div>
+       
+      </div>
+
+      <!-- Brands Count -->
+      <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-gray-600">Total Brands:</span>
+          <span class="font-semibold text-gray-900">{{ brands.length }}</span>
+        </div>
+      </div>
+
+      <!-- Brands List -->
+      <div class="space-y-3 max-h-96 overflow-y-auto">
+        <!-- Empty State -->
+        @if (brands.length === 0) {
+          <div class="text-center py-12">
+            <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Brands Found</h3>
+            <p class="text-gray-500">No brands have been suggested yet.</p>
+          </div>
+        }
+
+        <!-- Brand Items -->
+        @for (brand of brands; track brand._id) {
+          <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">{{ brand.name }}</h3>
+                
+                <div class="flex items-center space-x-3 mb-3">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border"
+                        [class]="brand.isaproved ? 'bg-green-100 text-green-800 border-green-200' : 'bg-orange-100 text-orange-800 border-orange-200'">
+                    <span class="w-2 h-2 bg-current rounded-full mr-2"
+                          [class]="brand.isaproved ? 'text-green-500' : 'text-orange-500'"></span>
+                    {{ brand.isaproved ? 'Approved' : 'Pending Approval' }}
+                  </span>
+                </div>
+                
+                <div class="text-xs text-gray-500 space-y-1">
+                  <p><span class="font-medium">ID:</span> {{ brand._id }}</p>
+                  @if (brand.suggestedBy) {
+                    <p>
+                      <span class="font-medium">Suggested by:</span> {{ brand.suggestedBy }}
+                    </p>
+                  }
+                </div>
+              </div>
+              
+              <div class="ml-4 flex flex-col space-y-2">
+                @if (!brand.isaproved) {
+                  <button 
+                    (click)="patchBrand(brand._id!)"
+                    class="flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Approve
+                  </button>
+                }
+                
+                @if (brand.isaproved) {
+                  <button 
+                    (click)="patchBrand(brand._id!)"
+                    class="flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Revoke Approval
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Information Panel -->
+  <div class="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-gray-200 rounded-lg p-6">
+    <div class="flex items-start">
+      <div class="flex-shrink-0">
+        <svg class="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div class="ml-4">
+        <h3 class="text-lg font-medium text-gray-900 mb-2">How to Use This Panel</h3>
+        <div class="text-sm text-gray-700 space-y-2">
+          <p>• <strong>Review Suggestions:</strong> Companies can suggest new categories and brands for approval.</p>
+          <p>• <strong>Approve Items:</strong> Click the "Approve" button to make categories and brands available for product creation.</p>
+          <p>• <strong>Track Status:</strong> Green badges indicate approved items, orange badges show pending approvals.</p>
+          <p>• <strong>Refresh Data:</strong> Use the refresh buttons to get the latest suggestions from companies.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <button 
+        (click)="getCategories(); getBrands()"
+        class="flex items-center justify-center px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Refresh All
+      </button>
+      
+      <div class="flex items-center justify-center px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        Total: {{ categories.length + brands.length }} Items
+      </div>
+      
+      <div class="flex items-center justify-center px-4 py-3 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg border border-blue-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Management Dashboard
+      </div>
+    </div>
+  </div>
+</div>

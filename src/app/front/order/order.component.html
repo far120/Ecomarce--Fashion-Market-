@@ -1,0 +1,62 @@
+<div *ngFor="let order of orders" 
+     class="rounded-2xl shadow-lg p-6 mb-8 border border-indigo-100"
+     style="background: linear-gradient(145deg, #f0f4ff, #ffffff);">
+    
+    <!-- User Info -->
+    <div class="mb-4 flex flex-wrap gap-6 items-center text-sm md:text-base">
+        <div>
+            <span class="font-semibold text-gray-700">User:</span>
+            <span class="text-indigo-700">{{ order.user?.username || 'Unknown' }}</span>
+        </div>
+        <div>
+            <span class="font-semibold text-gray-700">Email:</span>
+            <span class="text-blue-600">{{ order.user?.email || 'N/A' }}</span>
+        </div>
+        <div>
+            <span class="font-semibold text-gray-700">Payment:</span>
+            <span class="text-green-600">{{ order.paymentMethod || 'N/A' }}</span>
+        </div>
+        <div>
+            <span class="font-semibold text-gray-700">Status:</span>
+            <span class="text-xs font-semibold px-2 py-1 rounded-full"
+                [ngClass]="{
+                    'bg-yellow-200 text-yellow-800': order.status === 'pending',
+                    'bg-green-200 text-green-800': order.status === 'confirmed' || order.status === 'shipped' || order.status === 'delivered',
+                    'bg-red-200 text-red-800': order.status === 'canceled'
+                }">
+                {{ order.status || 'N/A' }}
+            </span>
+        </div>
+        <div>
+            <span class="font-semibold text-gray-700">Created:</span>
+            <span class="text-gray-500">{{ order.createdAt | date:'medium' }}</span>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+        <table class="min-w-full text-sm text-gray-700">
+            <thead class="bg-indigo-50 text-indigo-800 font-semibold">
+                <tr>
+                    <th class="py-2 px-4 text-left">Product</th>
+                    <th class="py-2 px-4 text-left">Qty</th>
+                    <th class="py-2 px-4 text-left">Price</th>
+                    <th class="py-2 px-4 text-left">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let p of order.products" class="hover:bg-indigo-50">
+                    <td class="py-2 px-4">{{ p.product?.name || 'N/A' }}</td>
+                    <td class="py-2 px-4">{{ p.quantity }}</td>
+                    <td class="py-2 px-4">${{ p.price }}</td>
+                    <td class="py-2 px-4 font-medium">${{ p.price * p.quantity }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Total Amount -->
+    <div class="mt-4 text-right font-bold text-lg text-indigo-800">
+        Total: ${{ order.totalAmount }}
+    </div>
+</div>

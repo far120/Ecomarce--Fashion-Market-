@@ -1,0 +1,51 @@
+<div *ngIf="token.length > 0" class="max-w-xl mx-auto p-6 bg-white rounded-xl shadow mt-10">
+  <h2 class="text-2xl font-bold mb-6 text-center text-purple-700">Add Your Review</h2>
+  <form [formGroup]="openviewform" (ngSubmit)="onsubmit()" class="space-y-5">
+    <div>
+      <label for="rating" class="block mb-1 font-medium text-slate-700">Rating</label>
+      <select id="rating" formControlName="rating" class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-purple-500">
+        <option value="">Select rating</option>
+        <option *ngFor="let r of [1,2,3,4,5]" [value]="r">{{ r }}</option>
+      </select>
+    </div>
+    <div>
+      <label for="comment" class="block mb-1 font-medium text-slate-700">Comment</label>
+      <textarea id="comment" formControlName="comment" rows="3" class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-purple-500" placeholder="Write your comment..."></textarea>
+    </div>
+    <div class="flex gap-4 justify-end">
+      <button type="button" (click)="resetForm()" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition">Reset</button>
+      <button type="submit" [disabled]="openviewform.invalid" class="px-6 py-2 rounded bg-purple-600 text-white font-semibold hover:bg-purple-700 transition disabled:bg-gray-300 disabled:text-gray-400">Submit</button>
+    </div>
+  </form>
+</div>
+
+<div class="max-w-2xl mx-auto mt-12 px-4 sm:px-6 lg:px-0">
+  <h3 class="text-2xl font-bold mb-6 text-center text-purple-700 border-b pb-2">All Reviews</h3>
+
+  <!-- No reviews message -->
+  <div *ngIf="!openviews || openviews.length === 0" class="text-gray-400 text-center py-8">
+    No reviews yet.
+  </div>
+
+  <!-- Review cards -->
+  <div *ngFor="let review of openviews" class="bg-white border border-gray-200 rounded-xl p-5 mb-5 shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div class="flex items-center justify-between mb-3">
+      <div class="text-purple-700 font-medium text-base">
+        {{ review.user?.username || 'Anonymous' }}
+      </div>
+      <div class="flex items-center gap-1 text-yellow-500 font-semibold text-sm">
+        <span class="text-lg">★</span>
+        <span class="text-slate-800">{{ review.rating }}/5</span>
+      </div>
+    </div>
+
+    <p class="text-slate-700 mb-2 leading-relaxed">
+      {{ review.comment }}
+    </p>
+
+    <div class="text-right text-xs text-gray-400 italic">
+      {{ review.createdAt | date:'short' }}
+    </div>
+  </div>
+</div>
+

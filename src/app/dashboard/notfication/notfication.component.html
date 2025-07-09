@@ -1,0 +1,144 @@
+<div class="container mx-auto p-6 bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="p-3 bg-blue-100 rounded-lg">
+          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Notifications</h1>
+          <p class="text-gray-600 mt-1">Stay updated with the latest activities and alerts</p>
+        </div>
+      </div>
+      
+ 
+    </div>
+  </div>
+
+
+
+  <!-- Notifications List -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <!-- Notification Header -->
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900">All Notifications ({{ notifications.length }})</h2>
+    </div>
+
+    <!-- Notifications Content -->
+    <div *ngIf="notifications && notifications.length > 0; else noNotifications" class="divide-y divide-gray-200">
+      <div *ngFor="let notification of notifications; let i = index" 
+           class="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+           [class.bg-gray-25]="notification.isRead">
+        <div class="flex items-start space-x-4">
+          <!-- Notification Icon -->
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                 [ngClass]="{
+                   'bg-green-100': notification.type === 'order',
+                   'bg-purple-100': notification.type === 'product',
+                   'bg-yellow-100': notification.type === 'stock',
+                   'bg-gray-100': !notification.type
+                 }">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                   [ngClass]="{
+                     'text-green-600': notification.type === 'order',
+                     'text-purple-600': notification.type === 'product',
+                     'text-yellow-600': notification.type === 'stock',
+                     'text-gray-600': !notification.type
+                   }">
+                <!-- Order icon -->
+                <path *ngIf="notification.type === 'order'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                <!-- Product icon -->
+                <path *ngIf="notification.type === 'product'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                <!-- Stock icon -->
+                <path *ngIf="notification.type === 'stock'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                <!-- Default notification icon -->
+                <path *ngIf="!notification.type" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Notification Content -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium" 
+                 [ngClass]="notification.isRead ? 'text-gray-700' : 'text-gray-900'">
+                {{ notification.message || 'Notification' }}
+              </p>
+              <div class="flex items-center space-x-2">
+                <!-- Status Badge -->
+                <span *ngIf="!notification.isRead" 
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      [ngClass]="{
+                        'bg-green-100 text-green-800': notification.type === 'order',
+                        'bg-purple-100 text-purple-800': notification.type === 'product',
+                        'bg-yellow-100 text-yellow-800': notification.type === 'stock',
+                        'bg-gray-100 text-gray-800': !notification.type
+                      }">
+                  {{ notification.type || 'New' }}
+                </span>
+                <span *ngIf="notification.isRead" 
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  Read
+                </span>
+                <!-- Timestamp -->
+                <span class="text-xs" 
+                      [ngClass]="notification.isRead ? 'text-gray-400' : 'text-gray-500'">
+                  {{ (notification.createdAt | date:'short') || 'Unknown' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Notification Details -->
+            <div class="mt-2 flex items-center space-x-4 text-xs" 
+                 [ngClass]="notification.isRead ? 'text-gray-400' : 'text-gray-500'">
+              <span *ngIf="notification.user">User: {{ notification.user.username || notification.user.email }}</span>
+              <span *ngIf="notification.user && notification.order">•</span>
+              <span *ngIf="notification.order">Order ID: {{ notification.order._id || notification.order }}</span>
+              <span *ngIf="notification.order && notification.product">•</span>
+              <span *ngIf="notification.product">Product: {{ notification.product }}</span>
+            </div>
+
+            <!-- Notification Type Description -->
+            <div *ngIf="notification.type" 
+                 class="mt-1 text-xs" 
+                 [ngClass]="notification.isRead ? 'text-gray-400' : 'text-gray-500'">
+              <span *ngIf="notification.type === 'order'">Order related notification</span>
+              <span *ngIf="notification.type === 'product'">Product related notification</span>
+              <span *ngIf="notification.type === 'stock'">Stock level notification</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <ng-template #noNotifications>
+      <div class="p-12 text-center">
+        <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No Notifications</h3>
+        <p class="text-gray-500 mb-6">You're all caught up! No new notifications at this time.</p>
+        <button 
+          (click)="loadnotifications()"
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Check Again
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+

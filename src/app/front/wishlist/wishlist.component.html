@@ -1,0 +1,94 @@
+<div class="bg-gray-50 min-h-screen py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">My Wishlist</h1>
+      <p class="text-gray-600">Your favorite items saved for later</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="wishlists.length === 0" class="text-center py-16">
+      <div class="max-w-md mx-auto">
+        <svg class="mx-auto h-24 w-24 text-gray-300 mb-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <h3 class="text-xl font-medium text-gray-900 mb-2">Your wishlist is empty</h3>
+        <p class="text-gray-500">Start adding products you love to keep track of them</p>
+      </div>
+    </div>
+
+    <!-- Wishlist Products Grid -->
+    <div *ngIf="wishlists.length > 0">
+      <div class="flex flex-col gap-6 ">
+        <!-- Product Card -->
+        <div *ngFor="let wishlist of wishlists">
+          <div *ngFor="let product of getProducts(wishlist)" class="flex flex-row bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group items-center max-w-3xl mx-auto mb-4">
+            <!-- Product Image -->
+            <div class="relative w-40 h-40 bg-gray-100 flex items-center justify-center flex-shrink-0">
+              <img
+                [src]="'http://localhost:2026/uploads/' + product.images"
+                alt="Product image"
+                crossorigin="anonymous"
+                class="object-contain w-full h-full object-fill transition-transform duration-300 group-hover:scale-105"
+              />
+              <div *ngIf="!product.images" class="absolute inset-0 flex items-center justify-center bg-gray-200">
+                <svg class="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+              </div>
+              <!-- Remove from Wishlist Heart Icon -->
+              <button 
+                (click)="deleteWishlist(product._id)"
+                title="Remove from wishlist"
+                aria-label="Remove from wishlist"
+                class="absolute top-3 right-3 p-2 bg-white/90 rounded-full shadow hover:bg-red-50 transition-colors duration-200">
+                <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </button>
+              <!-- Sale Badge -->
+              <div *ngIf="product.newprice && product.price > product.newprice" class="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
+                SALE
+              </div>
+            </div>
+            <!-- Product Info -->
+            <div class="flex flex-col flex-1 p-5 min-w-0">
+              <h3 class="font-bold text-gray-900 text-lg mb-1 truncate">{{ product.name }}</h3>
+              <p class="text-xs text-gray-400 mb-2">{{ product.brand }}</p>
+              <div class="mb-3">
+                <div *ngIf="product.newprice && product.price > product.newprice" class="flex items-center space-x-2">
+                  <span class="text-xl font-bold text-gray-900">${{ product.newprice }}</span>
+                  <span class="text-base text-gray-400 line-through">${{ product.price }}</span>
+                  <span class="bg-red-100 text-red-600 text-xs font-medium px-2 py-0.5 rounded">
+                    {{ ((product.price - product.newprice) / product.price * 100).toFixed(0) }}% OFF
+                  </span>
+                </div>
+                <div *ngIf="!product.newprice || product.price <= product.newprice">
+                  <span class="text-xl font-bold text-gray-900">${{ product.price }}</span>
+                </div>
+              </div>
+              <div class="mb-4">
+                <span *ngIf="product.stock > 0" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                  In Stock ({{ product.stock }})
+                </span>
+                <span *ngIf="product.stock <= 0" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
+                  Out of Stock
+                </span>
+              </div>
+              <button 
+                (click)="postToCart(product._id)"
+                [disabled]="product.stock <= 0"
+                class="mt-auto w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 shadow-sm"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.293 1.293a1 1 0 000 1.414L6 16h12M9 19a2 2 0 11-4 0 2 2 0 014 0zM20 19a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <span>{{ product.stock > 0 ? 'Add to Cart' : 'Out of Stock' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

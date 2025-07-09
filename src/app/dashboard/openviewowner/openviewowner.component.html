@@ -1,0 +1,19 @@
+<div class="max-w-3xl mx-auto mt-10">
+  <h2 class="text-2xl font-bold mb-6 text-center text-purple-700">All Product Reviews (Owner Panel)</h2>
+  <div *ngIf="!openviews || openviews.length === 0" class="text-gray-400 text-center py-8">No reviews found.</div>
+  <div *ngFor="let review of openviews" class="bg-white rounded-xl shadow-md p-5 mb-6 border border-gray-200 hover:shadow-lg transition-all duration-200">
+    <div class="flex items-center gap-3 mb-2">
+      <span *ngIf="review.user?.username" class="text-purple-700 font-semibold text-base">{{ review.user?.username }}</span>
+      <span class="text-yellow-400 text-lg">★</span>
+      <span class="font-semibold text-slate-800 text-base">{{ review?.rating! }}<span class="text-xs text-slate-500">/5</span></span>
+      <span *ngIf="!review.isApproved" class="ml-4 px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-medium">Pending</span>
+      <span *ngIf="review.isApproved" class="ml-4 px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-medium">Approved</span>
+    </div>
+    <div class="text-slate-700 mb-2 text-sm italic">{{ review.comment! }}</div>
+    <div class="flex justify-between items-center mt-2">
+      <div class="text-xs text-gray-400">{{ review.createdAt! | date:'short' }}</div>
+      <button *ngIf="!review.isApproved && review._id" (click)="patchOpenView(review._id)" class="px-4 py-1 rounded bg-purple-600 text-white text-xs font-semibold hover:bg-purple-700 transition">Approve</button>
+      <button *ngIf="review.isApproved && review._id" (click)="patchOpenView(review._id)" class="px-4 py-1 rounded bg-purple-600 text-white text-xs font-semibold hover:bg-purple-700 transition">notApprove</button>
+    </div>
+  </div>
+</div>

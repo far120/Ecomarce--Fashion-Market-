@@ -1,0 +1,297 @@
+<!-- Price Change Modal -->
+<div *ngIf="showPriceChangeModal"  class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+  <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative mx-auto animate-fade-in">
+    <button (click)="showPriceChangeModal = false" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-xl" aria-label="Close">&times;</button>
+    <h2 class="text-xl font-bold mb-4 text-red-700">Price Change Detected</h2>
+    <p class="mb-4 text-gray-700">Some products in your cart have changed price. Please review and choose an action for each:</p>
+    <table class="w-full text-sm border rounded overflow-hidden mb-4">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="py-2 px-3 text-left">Product</th>
+          <th class="py-2 px-3 text-center">Old Price</th>
+          <th class="py-2 px-3 text-center">New Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of priceChangedItems">
+          <td class="py-2 px-3">{{ item.name }}</td>
+          <td class="py-2 px-3 text-center">${{ item.oldPrice | number:'1.2-2' }}</td>
+          <td class="py-2 px-3 text-center text-red-600 font-semibold">${{ item.newPrice | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="flex flex-col gap-3">
+     <div *ngFor="let item of priceChangedItems" class="flex justify-end">
+        <button (click)="patchpricecart(item.productId)" class="px-4 py-2 rounded bg-gray-200 text-gray-800 hover:bg-gray-300 transition">
+          Close
+        </button>
+      </div>
+      <div *ngFor="let item of priceChangedItems" class="flex justify-end">
+        <button (click)="deleteCart(item.productId)" class="px-4 py-2 rounded bg-red-100 text-red-700 hover:bg-red-200 transition">
+          Remove "{{ item.name }}" from Cart
+        </button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="container mx-auto px-4 max-w-7xl">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
+      <p class="text-gray-600">
+        <span *ngIf="getTotalItemCount() > 0">{{ getTotalItemCount() }} item{{ getTotalItemCount() > 1 ? 's' : '' }} in your cart</span>
+        <span *ngIf="getTotalItemCount() === 0">Your cart is empty</span>
+      </p>
+    </div>
+
+    <!-- Empty Cart State -->
+    <div *ngIf="getTotalItemCount() === 0" class="text-center py-16">
+      <div class="bg-white rounded-lg shadow-sm p-12">
+        <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+          <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m2.6 8L6 5H2m5 8v6a2 2 0 002 2h6a2 2 0 002-2v-6m-4 4h4"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
+        <p class="text-gray-600 mb-6">Looks like you haven't added any items to your cart yet.</p>
+        <a routerLink="/products" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+
+    <!-- Cart Content -->
+    <div *ngIf="getTotalItemCount() > 0" class="lg:grid lg:grid-cols-12 lg:gap-8">
+      <!-- Cart Items -->
+      <div class="lg:col-span-8">
+        <div class="bg-white rounded-lg shadow-sm">
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Cart Items</h2>
+          </div>
+          
+          <div class="divide-y divide-gray-200">
+            <div *ngFor="let cart of carts; let i = index" class="p-6 hover:bg-gray-50 transition-colors">
+              <div *ngFor="let item of cart.items" class="flex items-start space-x-4 mb-4 last:mb-0">
+                <!-- Product Image -->
+                <div class="flex-shrink-0">
+                      <img
+          [src]="'http://localhost:2026/uploads/' + item.product?.images"
+            alt="Product image"
+            crossorigin="anonymous"
+          />
+                 
+                </div>
+
+                <!-- Product Details -->
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <h3 class="text-lg font-medium text-gray-900 truncate">
+                        {{ item.product?.name || 'Unknown Product' }}
+                      </h3>
+                      <p class="text-sm text-gray-600 mt-1 line-clamp-2">
+                        {{ item.product?.description || 'No description available' }}
+                      </p>
+                      
+                      <!-- Product Details -->
+                      <div class="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                        <span *ngIf="item.product?.brand?.name">Brand: {{ item.product!.brand!.name }}</span>
+                        <span *ngIf="item.product?.category?.name">Category: {{ item.product!.category!.name }}</span>
+                        <span *ngIf="item.product?.targetAudience" class="capitalize">{{ item.product!.targetAudience }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Remove Button -->
+                    <button 
+                      (click)="deleteCart(item.product?._id!)" 
+                      class="ml-4 p-2 text-gray-400 hover:text-red-500 transition-colors"
+                      title="Remove item"
+                      [attr.aria-label]="'Remove ' + (item.product?.name || 'item') + ' from cart'"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <!-- Price and Quantity -->
+                  <div class="flex items-center justify-between mt-4">
+                    <!-- Quantity Controls -->
+                    <div class="flex items-center space-x-3">
+                      <span class="text-sm text-gray-600">Quantity:</span>
+                      <div class="flex items-center border border-gray-300 rounded-lg">
+                        <button 
+                          class="px-3 py-1 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                          [disabled]="item.quantity <= 1"
+                          title="Decrease quantity"
+                          aria-label="Decrease quantity"
+                          (click)="decreaseQuantity(cart._id!, item.product!._id!, item.quantity)"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                          </svg>
+                        </button>
+                        <span class="px-4 py-1 text-sm font-medium text-gray-900 min-w-[3rem] text-center">
+                          {{ item.quantity }}
+                        </span>
+                        <button 
+                          class="px-3 py-1 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                          [disabled]="item.quantity >= (item.product?.stock || 0)"
+                          title="Increase quantity"
+                          aria-label="Increase quantity"
+                          (click)="increaseQuantity(cart._id!, item.product!._id!, item.quantity, item.product?.stock || 0)"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="text-right">
+                      <div class="flex items-center space-x-2">
+                        <span *ngIf="item.product && item.product.discount && item.product.discount > 0" 
+                              class="text-sm text-gray-500 line-through">
+                          ${{ item.product!.price | number:'1.2-2' }}
+                        </span>
+                        <span class="text-lg font-semibold text-gray-900">
+                          ${{ (item.product?.newprice || item.product?.price || 0) | number:'1.2-2' }}
+                        </span>
+                      </div>
+                      <div class="text-sm text-gray-600 mt-1">
+                        Total: ${{ ((item.product?.newprice || item.product?.price || 0) * item.quantity) | number:'1.2-2' }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Stock Status -->
+                  <div class="mt-2">
+                    <span *ngIf="item.product && item.product.stock && item.product.stock > 0" 
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <div class="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5"></div>
+                      In Stock ({{ item.product!.stock }} available)
+                    </span>
+                    <span *ngIf="!item.product || !item.product.stock || item.product.stock <= 0" 
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      <div class="w-1.5 h-1.5 bg-red-400 rounded-full mr-1.5"></div>
+                      Out of Stock
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:col-span-4 mt-8 lg:mt-0">
+        <div class="bg-white rounded-lg shadow-sm sticky top-8">
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Order Summary</h2>
+          </div>
+          
+          <div class="p-6 space-y-4">
+            <!-- Subtotal -->
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Subtotal</span>
+              <span class="font-medium text-gray-900">
+                ${{ calculateSubtotal() | number:'1.2-2' }}
+              </span>
+            </div>
+
+            <!-- Shipping -->
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Shipping</span>
+              <span class="font-medium text-green-600">Free</span>
+            </div>
+
+
+            <!-- Checkout Button -->
+            <div class="pt-4">
+              <button 
+                (click)="showCheckoutForm = true"
+                class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="getTotalItemCount() === 0"
+              >
+                Proceed to Checkout
+              </button>
+</div>
+
+<!-- Checkout Form Modal -->
+<!-- Checkout Form Modal as a modal dialog -->
+<div *ngIf="showCheckoutForm" class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-40">
+  <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative mx-auto animate-fade-in">
+    <button (click)="showCheckoutForm = false" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-xl" aria-label="Close">&times;</button>
+    <h2 class="text-2xl font-bold mb-4 text-indigo-700">Checkout</h2>
+    <!-- Cart Summary Table -->
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold mb-2 text-gray-800">Order Summary</h3>
+      <table class="w-full text-sm border rounded overflow-hidden">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="py-2 px-3 text-left">Product</th>
+            <th class="py-2 px-3 text-center">Quantity</th>
+            <th class="py-2 px-3 text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cart of carts">
+            <ng-container *ngFor="let item of cart.items">
+              <tr>
+                <td class="py-2 px-3">{{ item.product?.name }}</td>
+                <td class="py-2 px-3 text-center">{{ item.quantity }}</td>
+                <td class="py-2 px-3 text-right">${{ (item.quantity * (item.product?.newprice || item.product?.price || 0)) | number:'1.2-2' }}</td>
+              </tr>
+            </ng-container>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="font-semibold">
+            <td class="py-2 px-3 text-right" colspan="2">Total:</td>
+            <td class="py-2 px-3 text-right">
+              ${{ calculateSubtotal() | number:'1.2-2' }}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <form #checkoutForm="ngForm" (ngSubmit)="submitOrder(checkoutForm)">
+      <div class="mb-4">
+        <label class="block font-semibold mb-1 text-gray-700" for="address">Shipping Address</label>
+        <input id="address" name="address" [(ngModel)]="checkoutAddress" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" placeholder="Enter your address" />
+      </div>
+      <div class="mb-4">
+        <label class="block font-semibold mb-1 text-gray-700" for="phone">Phone Number</label>
+        <input id="phone" name="phone" [(ngModel)]="checkoutPhone" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" placeholder="Enter your phone number" />
+      </div>
+      <div *ngIf="checkoutError" class="text-red-600 font-semibold mb-2">{{ checkoutError }}</div>
+      <button type="submit" [disabled]="!checkoutForm.form.valid" class="w-full py-2 px-4 rounded bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition">Confirm Order</button>
+    </form>
+  </div>
+</div>
+
+            </div>
+
+            <!-- Continue Shopping -->
+            <div class="pt-2">
+              <a 
+                routerLink="/products" 
+                class="w-full block text-center text-sm text-blue-600 hover:text-blue-800 py-2 transition-colors"
+              >
+                Continue Shopping
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+

@@ -1,0 +1,282 @@
+<div class="p-6 bg-white rounded-lg shadow border border-gray-200">
+  <!-- Header Section -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-semibold text-gray-900">All Products</h2>
+    <div class="flex items-center space-x-4">
+      
+      <!-- Add Product Button -->
+      <button 
+        class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200"
+        title="Add a new product"
+        aria-label="Add a new product">
+        Add Product
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="bg-gray-50 p-4 rounded-lg mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      
+      <!-- Status Filter -->
+      <div class="flex flex-col">
+        <label for="status-filter" class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+        <select 
+          id="status-filter"
+          (change)="onStatusFilterChange($event)"
+          [value]="selectedStatus"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
+        >
+          <option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }} ({{ getStatusCount(option.value) }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Category Filter -->
+      <div class="flex flex-col">
+        <label for="category-filter" class="block text-sm font-medium text-gray-700 mb-1">Category:</label>
+        <select 
+          id="category-filter"
+          (change)="onCategoryFilterChange($event)"
+          [value]="selectedCategory"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
+        >
+          <option *ngFor="let option of categoryOptions" [value]="option.value">
+            {{ option.label }} ({{ getCategoryCount(option.value) }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Brand Filter -->
+      <div class="flex flex-col">
+        <label for="brand-filter" class="block text-sm font-medium text-gray-700 mb-1">Brand:</label>
+        <select 
+          id="brand-filter"
+          (change)="onBrandFilterChange($event)"
+          [value]="selectedBrand"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
+        >
+          <option *ngFor="let option of brandOptions" [value]="option.value">
+            {{ option.label }} ({{ getBrandCount(option.value) }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Target Audience Filter -->
+      <div class="flex flex-col">
+        <label for="audience-filter" class="block text-sm font-medium text-gray-700 mb-1">Audience:</label>
+        <select 
+          id="audience-filter"
+          (change)="onTargetAudienceFilterChange($event)"
+          [value]="selectedTargetAudience"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
+        >
+          <option *ngFor="let option of targetAudienceOptions" [value]="option.value">
+            {{ option.label }} ({{ getTargetAudienceCount(option.value) }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Price Range Filter -->
+      <div class="flex flex-col">
+        <label for="price-filter" class="block text-sm font-medium text-gray-700 mb-1">Price Range:</label>
+        <select 
+          id="price-filter"
+          (change)="onPriceRangeFilterChange($event)"
+          [value]="selectedPriceRange"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
+        >
+          <option *ngFor="let option of priceRangeOptions" [value]="option.value">
+            {{ option.label }} ({{ getPriceRangeCount(option.value) }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Created Date Filter -->
+      <div class="flex flex-col">
+        <label for="date-filter" class="block text-sm font-medium text-gray-700 mb-1">Created:</label>
+        <select 
+          id="date-filter"
+          (change)="onCreatedAtFilterChange($event)"
+          [value]="selectedCreatedAt"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
+        >
+          <option *ngFor="let option of createdAtOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Filter Actions -->
+    <div class="flex items-center justify-between mt-4">
+      <div class="flex items-center space-x-2">
+        <span class="text-sm text-gray-600">
+          Showing {{ filteredProducts.length }} of {{ products.length }} products
+        </span>
+        <span *ngIf="hasActiveFilters" class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+          Filters Active
+        </span>
+      </div>
+      
+      <div class="flex items-center space-x-2">
+        <!-- Clear All Filters Button -->
+        <button 
+          *ngIf="hasActiveFilters"
+          (click)="clearAllFilters()"
+          class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+          title="Clear all filters"
+          aria-label="Clear all filters">
+          Clear All Filters
+        </button>
+        
+       
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Table -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <!-- Table Header -->
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Product</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Category</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">companyname</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Stock</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">status</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">IsAvilable</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody class="divide-y divide-gray-100 bg-white">
+        <!-- Empty State -->
+        <tr *ngIf="filteredProducts.length === 0">
+          <td colspan="8" class="px-6 py-12 text-center text-gray-400">
+            <div class="flex flex-col items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+              <span class="text-lg font-medium mb-2">
+                {{ selectedStatus === 'all' ? 'No products found' : 'No products found for selected status' }}
+              </span>
+              <p class="text-sm text-gray-500 mb-4">
+                {{ selectedStatus === 'all' ? 'Get started by adding your first product' : 'Try selecting a different status filter' }}
+              </p>
+              <button (click)="loadProducts()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Reload Products
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Product Rows -->
+        <tr *ngFor="let product of filteredProducts; let i = index" class="hover:bg-gray-50 transition-colors duration-150">
+          <!-- Product Info -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="h-12 w-12 flex-shrink-0">
+                  <img
+          [src]="'http://localhost:2026/uploads/' + product.images"
+            alt="Product image"
+            crossorigin="anonymous"
+          />
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-semibold text-gray-900">{{ product.name }}</div>
+                <div class="text-xs text-gray-500">ID: {{ product._id || 'N/A' }}</div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Category -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              {{ product.category?.name || 'Uncategorized' }}
+            </span>
+          </td>
+
+          <!-- companyname -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              {{ product.company?.name || 'N/A' }}
+            </span>
+          
+          </td>
+
+          <!-- Stock -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span 
+              [class]="product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+            >
+              <span *ngIf="product.stock > 0; else outOfStock">In Stock ({{ product.stock }})</span>
+              <ng-template #outOfStock>Out of Stock</ng-template>
+            </span>
+          </td>
+
+          
+         
+          
+            <!-- status -->
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span 
+                    [class]="product.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                >
+                    {{ product.status }}
+                </span>
+          <!-- IsAvailable -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span
+              [class]="product.isVisible ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+            >
+              {{ product.isVisible ? 'Available' : 'Unavailable' }}
+            </span>
+          </td>
+
+          <!-- Actions -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center space-x-3">
+             
+              <!-- Approve/Status Button -->
+              <button 
+                *ngIf="product._id"
+                (click)="approveProduct(product._id)"
+                [class]="product.status === 'approved' ? 'text-green-600 hover:text-green-700' : 'text-yellow-600 hover:text-yellow-700'"
+                class="transition-colors duration-200 p-1 rounded"
+                [title]="product.status === 'approved' ? 'Product Approved' : 'Approve Product'"
+                [attr.aria-label]="product.status === 'approved' ? 'Product approved' : 'Approve product'"
+              >
+                <span class="sr-only">{{product.status === 'approved' ? 'Product approved' : 'Approve product'}}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </button>
+
+              <!-- Delete Button -->
+              <button 
+                *ngIf="product._id"
+                (click)="deleteProduct(product._id)"
+                class="text-red-500 hover:text-red-700 transition-colors duration-200 p-1 rounded"
+                title="Delete Product"
+                aria-label="Delete product"
+              >
+                <span class="sr-only">Delete product</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

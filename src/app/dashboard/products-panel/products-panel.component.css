@@ -1,0 +1,351 @@
+/* Products Panel Component Styles */
+
+/* Filter Section Styling */
+.filter-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Grid responsive adjustments */
+@media (max-width: 768px) {
+  .filter-section .grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .filter-section .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .filter-section .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Enhanced select styling */
+select {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+select:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Button styling */
+.filter-button {
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+}
+
+.filter-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.filter-button:active {
+  transform: translateY(0);
+}
+
+/* Filter tags styling */
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease-in-out;
+}
+
+.filter-tag:hover {
+  transform: scale(1.05);
+}
+
+/* Modal styling enhancements */
+.modal-overlay {
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  animation: slideUp 0.3s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form styling */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Status badge colors */
+.status-approved {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-not-available {
+  background-color: #fecaca;
+  color: #991b1b;
+}
+
+/* Table enhancements */
+.product-table {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.product-table thead {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+}
+
+.product-table thead th {
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.product-table tbody tr:hover {
+  background-color: #f8fafc;
+  transform: scale(1.001);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Product image styling */
+.product-image {
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.product-image:hover {
+  transform: scale(1.1);
+}
+
+/* Action buttons */
+.action-btn {
+  transition: all 0.2s ease-in-out;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn-edit {
+  color: #059669;
+}
+
+.action-btn-edit:hover {
+  color: #047857;
+  background-color: #ecfdf5;
+}
+
+.action-btn-delete {
+  color: #dc2626;
+}
+
+.action-btn-delete:hover {
+  color: #b91c1c;
+  background-color: #fef2f2;
+}
+
+/* File upload styling */
+.file-upload {
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.file-upload:hover {
+  border-color: #3b82f6;
+  background-color: #f8fafc;
+}
+
+.file-upload.drag-over {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+/* Loading states */
+.loading-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #f3f4f6;
+  border-radius: 50%;
+  border-top-color: #3b82f6;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty state styling */
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.empty-state svg {
+  margin: 0 auto 1rem;
+  opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filter-section .flex {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filter-section .grid {
+    gap: 0.75rem;
+  }
+
+  .product-table {
+    font-size: 0.875rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .modal-content {
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+  }
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus indicators for accessibility */
+*:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+button:focus,
+select:focus,
+input:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* Animation for filter changes */
+.filter-transition {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.filter-transition.loading {
+  opacity: 0.7;
+}
+
+/* Form validation styling */
+.form-error {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.form-error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+/* Success states */
+.form-success {
+  border-color: #059669;
+  background-color: #ecfdf5;
+}
+
+/* Button variants */
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
